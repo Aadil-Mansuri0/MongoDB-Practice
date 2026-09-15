@@ -2,23 +2,36 @@
 
 MongoDB practical exercises completed using `mongosh`.
 
-## Contents
+## Practical Files
 
-1. Basic database and collection operations
-2. Student database with documents
-3. E-commerce database with arrays and embedded objects
-4. Hospital database with arrays and embedded objects
-5. Employee database with arrays and embedded objects
-6. Poornima College Student database — 15 documents
+| No. | File | Topic |
+|---|---|---|
+| 01 | `01-studentDB.js` | Student database, arrays and embedded objects |
+| 02 | `02-ecommerceDB.js` | E-commerce products, arrays and embedded seller objects |
+| 03 | `03-hospitalDB.js` | Hospital patients, medicine arrays and embedded doctor objects |
+| 04 | `04-employeeDB.js` | Employee records, skills arrays and embedded contact objects |
+| 05 | `05-mongodb-basics.js` | Basic database, collection, insertion, display and count operations |
+| 06 | `06-poornimaCollegeDB.js` | Poornima College Student database with 15 documents |
 
 ## Concepts Covered
 
-- Database and collection creation
-- `insertOne()` and `insertMany()`
+- Database creation with `use`
+- Explicit collection creation with `db.createCollection()`
+- `insertMany()`
 - `find()` and `pretty()`
+- `countDocuments()`
 - Arrays
 - Embedded documents / objects
-- Document counting
-- Basic MongoDB shell commands
+- Basic MongoDB document structure
 
-> These scripts are intended for learning and practical/lab use with `mongosh`.
+## Run
+
+Open MongoDB Shell (`mongosh`) and execute any `.js` file according to the practical requirement.
+
+Example:
+
+```javascript
+load("01-studentDB.js")
+```
+
+For the sixth practical, the database is `poornimaCollegeDB`, collection is `Student`, and the script inserts 15 student documents. The `address` field demonstrates an embedded object and `skills` demonstrates an array.
