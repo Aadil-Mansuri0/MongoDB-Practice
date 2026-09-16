@@ -36,8 +36,9 @@ The repository contains MongoDB practicals covering database and collection basi
 | 26 | `26-delete-many.js` | `deleteMany()` |
 | 27 | `27-sort-and-limit.js` | Sorting with `sort()` and limiting with `limit()` |
 | 28 | `28-projection.js` | Including and excluding fields with projection |
-| 29 | `29-aggregation-basics.js` | Basic `$group` aggregation and accumulator operators |
-| 30 | `30-aggregation-pipeline.js` | `$match`, `$group`, and `$sort` aggregation pipeline |
+| 29 | `29-aggregation-basics.js` | `$group`, `$sum`, `$avg`, `$min`, `$max`, `$count`, `$sort` |
+| 30 | `30-aggregation-pipeline.js` | `$match`, `$group`, `$sum`, `$avg`, `$sort`, `$limit` pipelines |
+| 31 | `31-aggregation-advanced.js` | Complete aggregation practice set from `db.aggex` |
 
 ## Concepts Covered
 
@@ -77,13 +78,28 @@ The repository contains MongoDB practicals covering database and collection basi
 - `deleteMany()`
 
 ### Aggregation
+The aggregation section now reflects the operations present in the mongosh work on `db.aggex`:
+
 - `aggregate()`
 - `$match`
 - `$group`
 - `$sum`
 - `$avg`
+- `$min`
+- `$max`
+- `$count`
 - `$sort`
-- Aggregation pipelines
+- `$limit`
+- Multi-stage aggregation pipelines
+- Grouping by category
+- Category-wise product counts
+- Category-wise average prices
+- Category-wise total revenue
+- Combined category metrics
+- Top 5 categories by revenue
+- Top 10 most expensive products
+- Filtering Electronics products
+- Filtering products with price greater than 50,000
 
 ## Run
 
