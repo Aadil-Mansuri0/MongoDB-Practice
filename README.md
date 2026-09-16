@@ -2,7 +2,7 @@
 
 A collection of MongoDB practical exercises written as JavaScript scripts for `mongosh`.
 
-The repository contains earlier database practicals along with the latest practice work covering student queries, comparison and logical operators, product updates, array operators, and nested documents.
+The repository contains MongoDB practicals covering database and collection basics, CRUD operations, query operators, update operators, arrays, nested documents, sorting, projection, and aggregation.
 
 ## Practical Files
 
@@ -26,6 +26,18 @@ The repository contains earlier database practicals along with the latest practi
 | 16 | `16-unset-operator.js` | `$unset` for removing a field |
 | 17 | `17-array-operators.js` | `$push`, `$addToSet`, `$pop`, `$pull` |
 | 18 | `18-nested-document-update.js` | Updating a field inside an embedded document |
+| 19 | `19-rename-operator.js` | `$rename` for changing a field name |
+| 20 | `20-mul-operator.js` | `$mul` for multiplying numeric field values |
+| 21 | `21-current-date-operator.js` | `$currentDate` for storing the current date |
+| 22 | `22-update-one.js` | `updateOne()` |
+| 23 | `23-update-many.js` | `updateMany()` |
+| 24 | `24-replace-one.js` | `replaceOne()` for replacing a complete document |
+| 25 | `25-delete-one.js` | `deleteOne()` |
+| 26 | `26-delete-many.js` | `deleteMany()` |
+| 27 | `27-sort-and-limit.js` | Sorting with `sort()` and limiting with `limit()` |
+| 28 | `28-projection.js` | Including and excluding fields with projection |
+| 29 | `29-aggregation-basics.js` | Basic `$group` aggregation and accumulator operators |
+| 30 | `30-aggregation-pipeline.js` | `$match`, `$group`, and `$sort` aggregation pipeline |
 
 ## Concepts Covered
 
@@ -40,18 +52,38 @@ The repository contains earlier database practicals along with the latest practi
 ### Query Operators
 - Comparison operators: `$gt`, `$gte`, `$lt`, `$lte`, `$eq`, `$ne`
 - Logical operators: `$and`, `$or`, `$not`, `$nor`
+- Sorting with `sort()`
+- Limiting results with `limit()`
+- Projection
 
-### Update Operators
+### Update & CRUD Operations
 - `$set`
 - `$inc`
 - `$min`
 - `$max`
 - `$unset`
+- `$rename`
+- `$mul`
+- `$currentDate`
 - `$push`
 - `$addToSet`
 - `$pop`
 - `$pull`
 - Dot notation for nested document updates
+- `updateOne()`
+- `updateMany()`
+- `replaceOne()`
+- `deleteOne()`
+- `deleteMany()`
+
+### Aggregation
+- `aggregate()`
+- `$match`
+- `$group`
+- `$sum`
+- `$avg`
+- `$sort`
+- Aggregation pipelines
 
 ## Run
 
@@ -63,4 +95,4 @@ load("07-database-and-collection.js")
 
 For scripts that create or modify data, make sure the required database and collection exist before running them.
 
-> **Note:** These scripts are practice exercises intended for learning MongoDB CRUD operations, query operators, and document updates.
+> **Note:** These scripts are practice exercises intended for learning MongoDB CRUD operations, query operators, update operators, and aggregation.
