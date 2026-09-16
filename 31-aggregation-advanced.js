@@ -1,7 +1,19 @@
 // Part 31: Advanced Aggregation Operations
-// Advanced stages and expressions from the aggregation practice material.
+// Advanced stages and expressions from the supplied aggregation practice material.
 
 use("PCEA24CA001");
+
+// Supporting seller hierarchy for $graphLookup.
+db.aggregationSellers.drop();
+db.aggregationSellers.insertMany([
+  { sellerName: "National", parentSeller: null, level: 0 },
+  { sellerName: "North", parentSeller: "National", level: 1 },
+  { sellerName: "South", parentSeller: "National", level: 1 },
+  { sellerName: "Jaipur", parentSeller: "North", level: 2 },
+  { sellerName: "Delhi", parentSeller: "North", level: 2 },
+  { sellerName: "Mumbai", parentSeller: "South", level: 2 },
+  { sellerName: "Pune", parentSeller: "South", level: 2 }
+]);
 
 // $filter: keep only array elements matching a condition.
 db.aggex.aggregate([
@@ -21,7 +33,7 @@ db.aggex.aggregate([
   }
 ]);
 
-// $map: transform every element of an array.
+// $map: transform every array element.
 db.aggex.aggregate([
   {
     $project: {
@@ -57,10 +69,20 @@ db.aggex.aggregate([
   }
 ]);
 
-// $graphLookup: recursive relationship traversal.
-// This uses seller.name as a simple relationship key when matching
-// seller documents that have a parentSeller field.
+// $graphLookup: recursively traverse the supporting seller hierarchy.
 db.aggex.aggregate([
+  {
+    $set: {
+      seller: {
+        name: {
+          $arrayElemAt: [
+            ["Jaipur", "Delhi", "Mumbai", "Pune"],
+            { $mod: [{ $toInt: { $substr: ["$productId", 4, 4] } }, 4] }
+          ]
+        }
+      }
+    }
+  },
   {
     $graphLookup: {
       from: "aggregationSellers",
@@ -109,14 +131,12 @@ db.aggex.aggregate([
   }
 ]);
 
-// $sample: return a random sample of documents.
+// $sample: return random documents.
 db.aggex.aggregate([
-  {
-    $sample: { size: 5 }
-  }
+  { $sample: { size: 5 } }
 ]);
 
-// $replaceWith: replace the current document with a selected embedded document.
+// $replaceWith: return a smaller document shape.
 db.aggex.aggregate([
   {
     $replaceWith: {
@@ -127,7 +147,7 @@ db.aggex.aggregate([
   }
 ]);
 
-// $out: write aggregation results to a separate collection.
+// $out: write category revenue results to a derived collection.
 db.aggex.aggregate([
   {
     $group: {
@@ -135,12 +155,10 @@ db.aggex.aggregate([
       totalRevenue: { $sum: "$revenue" }
     }
   },
-  {
-    $out: "aggregationCategoryRevenue"
-  }
+  { $out: "aggregationCategoryRevenue" }
 ]);
 
-// $merge: merge aggregation results into a target collection.
+// $merge: merge category metrics into a derived collection.
 db.aggex.aggregate([
   {
     $group: {
@@ -150,33 +168,19 @@ db.aggex.aggregate([
     }
   },
   {
-    $project: {
-      _id: 0,
-      category: "$_id",
-      totalProducts: 1,
-      totalRevenue: 1
-    }
-  },
-  {
     $merge: {
       into: "aggregationCategorySummary",
-      on: "category",
+      on: "_id",
       whenMatched: "replace",
       whenNotMatched: "insert"
     }
   }
 ]);
 
-// Combined advanced pipeline: filter, unwind, group, sort, and limit.
+// Combined advanced pipeline: match -> unwind -> group -> sort -> limit.
 db.aggex.aggregate([
-  {
-    $match: {
-      price: { $gt: 50000 }
-    }
-  },
-  {
-    $unwind: "$tags"
-  },
+  { $match: { price: { $gt: 50000 } } },
+  { $unwind: "$tags" },
   {
     $group: {
       _id: "$tags",
@@ -185,10 +189,6 @@ db.aggex.aggregate([
       totalRevenue: { $sum: "$revenue" }
     }
   },
-  {
-    $sort: { totalRevenue: -1 }
-  },
-  {
-    $limit: 10
-  }
+  { $sort: { totalRevenue: -1 } },
+  { $limit: 10 }
 ]);
