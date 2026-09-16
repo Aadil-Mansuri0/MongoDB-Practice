@@ -1,6 +1,6 @@
 # MongoDB Practice
 
-A clean, beginner-friendly collection of MongoDB and `mongosh` JavaScript practicals covering databases, CRUD, query operators, update operators, arrays, nested documents, projection, sorting, and aggregation pipelines.
+A clean, beginner-friendly collection of MongoDB and `mongosh` JavaScript practicals covering databases, CRUD, query operators, update operators, arrays, nested documents, projection, sorting, and aggregation.
 
 ## Repository Structure
 
@@ -19,7 +19,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 07 | `07-database-and-collection.js` | Database selection and collection creation |
 | 08 | `08-insert-students.js` | `insertMany()` with arrays and embedded documents |
 | 09 | `09-find-students.js` | Basic `find()` queries |
-| 10 | `10-comparison-operators.js` | `$gt`, `$gte`, `$lt`, `$lte`, `$eq`, `$ne` |
+| 10 | `10-comparison-operators.js` | `$gt`, `$gte`, `$lt`, `$lte`, `$eq`, `$ne`, `$in`, `$nin` |
 | 11 | `11-logical-operators.js` | `$and`, `$or`, `$not`, `$nor` |
 | 12 | `12-create-products.js` | Product collection and sample product data |
 | 13 | `13-set-operator.js` | `$set` with `updateOne()` and `updateMany()` |
@@ -38,11 +38,11 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 26 | `26-delete-many.js` | `deleteMany()` |
 | 27 | `27-sort-and-limit.js` | Sorting and limiting query results |
 | 28 | `28-projection.js` | Field inclusion/exclusion and aggregation projection |
-| 29 | `29-aggregation-basics.js` | Basic `$group`, `$sum`, `$avg`, `$min`, `$max`, `$count`, `$sort` |
-| 30 | `30-aggregation-pipeline.js` | Multi-stage `$match`, `$group`, `$sort`, `$limit` pipelines |
-| 31 | `31-aggregation-advanced.js` | Aggregation analysis on the `aggex` collection |
+| 29 | `29-aggregation-basics.js` | Basic aggregation and group calculations |
+| 30 | `30-aggregation-pipeline.js` | Multi-stage aggregation pipelines |
+| 31 | `31-aggregation-advanced.js` | `$filter`, `$map`, `$reduce`, `$graphLookup`, buckets, sampling, `$out`, `$merge` |
 | 32 | `32-aggex-data-generation.js` | Generates the 5,000-document `aggex` practice dataset |
-| 33 | `33-aggregation-complete-practice.js` | Separate end-to-end aggregation collection covering the supplied aggregation-stage study material |
+| 33 | `33-aggregation-complete-practice.js` | Independent end-to-end aggregation practice set |
 
 ## Concepts Covered
 
@@ -55,7 +55,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 - Embedded and nested documents
 
 ### Query Operators
-- Comparison: `$gt`, `$gte`, `$lt`, `$lte`, `$eq`, `$ne`
+- Comparison: `$gt`, `$gte`, `$lt`, `$lte`, `$eq`, `$ne`, `$in`, `$nin`
 - Logical: `$and`, `$or`, `$not`, `$nor`
 - Sorting with `sort()`
 - Limiting with `limit()`
@@ -70,51 +70,38 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 - `deleteOne()`, `deleteMany()`
 
 ### Aggregation
-The repository includes both the operations actually performed in the mongosh `aggex` work and a separate comprehensive aggregation practice file based on the supplied aggregation-pipeline study material.
+The repository includes the practical aggregation work and a separate independent comprehensive aggregation script.
 
-Core aggregation stages:
-- `$match`
-- `$project`
-- `$group`
-- `$sort`
-- `$limit`
-- `$skip`
-- `$unwind`
-- `$lookup`
-- `$count`
-- `$addFields`
-- `$set`
-- `$unset`
-- `$replaceWith`
-- `$sample`
-- `$out`
-- `$merge`
-- `$bucket`
-- `$bucketAuto`
+Core stages demonstrated:
+- `$match`, `$project`, `$group`, `$sort`, `$limit`, `$skip`
+- `$unwind`, `$lookup`, `$count`
+- `$addFields`, `$set`, `$unset`, `$replaceWith`
+- `$sample`, `$bucket`, `$bucketAuto`
+- `$out`, `$merge`
+- `$graphLookup`
 
-Common accumulator/operators demonstrated:
-- `$sum`
-- `$avg`
-- `$min`
-- `$max`
-- `$first`
-- `$last`
-- `$push`
-- `$addToSet`
+Array expressions demonstrated:
+- `$filter`
+- `$map`
+- `$reduce`
+
+Common accumulators/operators demonstrated:
+- `$sum`, `$avg`, `$min`, `$max`
+- `$first`, `$last`, `$push`, `$addToSet`
 - `$multiply`
 
 Aggregation examples include:
 - Filtering products
-- Category-wise counts and averages
-- Category-wise revenue analysis
-- Minimum/maximum price
-- Average rating
+- Category-wise counts, averages, and revenue
+- Minimum/maximum price and average rating
 - Top-N products
 - Pagination with `$skip` + `$limit`
 - Array expansion with `$unwind`
 - Collection joins with `$lookup`
+- Array processing with `$filter`, `$map`, and `$reduce`
+- Recursive relationships with `$graphLookup`
 - Random sampling
-- Price buckets
+- Explicit and automatic price buckets
 - Writing results with `$out` and `$merge`
 - Complete multi-stage pipelines
 
@@ -126,13 +113,13 @@ Use MongoDB Shell (`mongosh`). For example:
 load("07-database-and-collection.js")
 ```
 
-For the aggregation dataset:
+For the 5,000-document aggregation dataset:
 
 ```javascript
 load("32-aggex-data-generation.js")
 ```
 
-For the complete independent aggregation practice:
+For the independent complete aggregation practice:
 
 ```javascript
 load("33-aggregation-complete-practice.js")
@@ -144,5 +131,6 @@ load("33-aggregation-complete-practice.js")
 
 - These are learning/practical scripts, not a production application.
 - Random-data scripts generate different values on each run.
-- `32-aggex-data-generation.js` recreates the `aggex` dataset and should not be repeatedly run without understanding its effect on existing data.
-- `33-aggregation-complete-practice.js` intentionally uses separate collections so it does not depend on the original `aggex` dataset.
+- `32-aggex-data-generation.js` recreates the `aggex` dataset; run it only when you intentionally want a fresh dataset.
+- `33-aggregation-complete-practice.js` uses separate collections and includes its own supporting data, so it does not depend on the original `aggex` dataset.
+- Never commit MongoDB Atlas connection strings, usernames, passwords, API keys, or other secrets to this repository.
