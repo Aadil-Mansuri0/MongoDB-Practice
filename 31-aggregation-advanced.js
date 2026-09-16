@@ -1,137 +1,194 @@
-// Part 31: Aggregation - Complete Practice Set
-// Additional aggregation operations explicitly performed in mongosh on db.aggex.
+// Part 31: Advanced Aggregation Operations
+// Advanced stages and expressions from the aggregation practice material.
 
 use("PCEA24CA001");
 
-// 1. Count all products.
+// $filter: keep only array elements matching a condition.
 db.aggex.aggregate([
   {
-    $count: "totalProducts"
-  }
-]);
-
-// 2. Find minimum and maximum product price.
-db.aggex.aggregate([
-  {
-    $group: {
-      _id: null,
-      minimumPrice: { $min: "$price" },
-      maximumPrice: { $max: "$price" }
+    $project: {
+      _id: 0,
+      productId: 1,
+      tags: 1,
+      premiumTags: {
+        $filter: {
+          input: "$tags",
+          as: "tag",
+          cond: { $eq: ["$$tag", "premium"] }
+        }
+      }
     }
   }
 ]);
 
-// 3. Find the average rating of all products.
+// $map: transform every element of an array.
 db.aggex.aggregate([
   {
-    $group: {
-      _id: null,
-      averageRating: { $avg: "$rating" }
+    $project: {
+      _id: 0,
+      productId: 1,
+      tags: 1,
+      upperCaseTags: {
+        $map: {
+          input: "$tags",
+          as: "tag",
+          in: { $toUpper: "$$tag" }
+        }
+      }
     }
   }
 ]);
 
-// 4. Count products in every category.
+// $reduce: combine array elements into one value.
 db.aggex.aggregate([
   {
-    $group: {
-      _id: "$category",
-      totalProducts: { $sum: 1 }
+    $project: {
+      _id: 0,
+      productId: 1,
+      tags: 1,
+      tagCount: {
+        $reduce: {
+          input: "$tags",
+          initialValue: 0,
+          in: { $add: ["$$value", 1] }
+        }
+      }
     }
   }
 ]);
 
-// 5. Find average price in every category.
+// $graphLookup: recursive relationship traversal.
+// This uses seller.name as a simple relationship key when matching
+// seller documents that have a parentSeller field.
 db.aggex.aggregate([
   {
-    $group: {
-      _id: "$category",
-      averagePrice: { $avg: "$price" }
+    $graphLookup: {
+      from: "aggregationSellers",
+      startWith: "$seller.name",
+      connectFromField: "parentSeller",
+      connectToField: "sellerName",
+      as: "sellerHierarchy"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      productId: 1,
+      "seller.name": 1,
+      sellerHierarchy: 1
     }
   }
 ]);
 
-// 6. Find total revenue in every category.
+// $bucket: group prices into explicit ranges.
+db.aggex.aggregate([
+  {
+    $bucket: {
+      groupBy: "$price",
+      boundaries: [0, 25000, 50000, 75000, 100000],
+      default: "100000+",
+      output: {
+        count: { $sum: 1 },
+        averagePrice: { $avg: "$price" }
+      }
+    }
+  }
+]);
+
+// $bucketAuto: automatically create price buckets.
+db.aggex.aggregate([
+  {
+    $bucketAuto: {
+      groupBy: "$price",
+      buckets: 5,
+      output: {
+        count: { $sum: 1 },
+        averagePrice: { $avg: "$price" }
+      }
+    }
+  }
+]);
+
+// $sample: return a random sample of documents.
+db.aggex.aggregate([
+  {
+    $sample: { size: 5 }
+  }
+]);
+
+// $replaceWith: replace the current document with a selected embedded document.
+db.aggex.aggregate([
+  {
+    $replaceWith: {
+      productId: "$productId",
+      productName: "$productName",
+      price: "$price"
+    }
+  }
+]);
+
+// $out: write aggregation results to a separate collection.
 db.aggex.aggregate([
   {
     $group: {
       _id: "$category",
       totalRevenue: { $sum: "$revenue" }
     }
+  },
+  {
+    $out: "aggregationCategoryRevenue"
   }
 ]);
 
-// 7. Combine count, average price, and total revenue by category.
+// $merge: merge aggregation results into a target collection.
 db.aggex.aggregate([
   {
     $group: {
       _id: "$category",
       totalProducts: { $sum: 1 },
-      averagePrice: { $avg: "$price" },
-      totalRevenue: { $sum: "$revenue" }
-    }
-  }
-]);
-
-// 8. Sort categories by total revenue in descending order.
-db.aggex.aggregate([
-  {
-    $group: {
-      _id: "$category",
       totalRevenue: { $sum: "$revenue" }
     }
   },
   {
-    $sort: {
-      totalRevenue: -1
-    }
-  }
-]);
-
-// 9. Get the top 5 categories by revenue.
-db.aggex.aggregate([
-  {
-    $group: {
-      _id: "$category",
-      totalRevenue: { $sum: "$revenue" }
+    $project: {
+      _id: 0,
+      category: "$_id",
+      totalProducts: 1,
+      totalRevenue: 1
     }
   },
   {
-    $sort: {
-      totalRevenue: -1
-    }
-  },
-  {
-    $limit: 5
-  }
-]);
-
-// 10. Get the 10 most expensive products.
-db.aggex.aggregate([
-  {
-    $sort: {
-      price: -1
-    }
-  },
-  {
-    $limit: 10
-  }
-]);
-
-// 11. Filter only Electronics products.
-db.aggex.aggregate([
-  {
-    $match: {
-      category: "Electronics"
+    $merge: {
+      into: "aggregationCategorySummary",
+      on: "category",
+      whenMatched: "replace",
+      whenNotMatched: "insert"
     }
   }
 ]);
 
-// 12. Filter products with price greater than 50,000.
+// Combined advanced pipeline: filter, unwind, group, sort, and limit.
 db.aggex.aggregate([
   {
     $match: {
       price: { $gt: 50000 }
     }
+  },
+  {
+    $unwind: "$tags"
+  },
+  {
+    $group: {
+      _id: "$tags",
+      productCount: { $sum: 1 },
+      averagePrice: { $avg: "$price" },
+      totalRevenue: { $sum: "$revenue" }
+    }
+  },
+  {
+    $sort: { totalRevenue: -1 }
+  },
+  {
+    $limit: 10
   }
 ]);
