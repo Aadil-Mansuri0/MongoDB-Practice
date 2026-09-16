@@ -1,9 +1,11 @@
 // Part 32: aggex Data Generation
 // Generates the same 5000-document aggex dataset used in mongosh practice.
+// Run this once for a fresh practice dataset.
 
 use("PCEA24CA001");
 
-db.createCollection("aggex");
+// Start fresh so repeated execution does not create duplicate datasets.
+db.aggex.drop();
 
 const categories = [
   "Electronics", "Mobiles", "Laptops", "Home Appliances", "Fashion",
@@ -56,7 +58,6 @@ const tags = [
 
 let documents = [];
 
-// Generate 5000 documents.
 for (let i = 1; i <= 5000; i++) {
   const category = categories[Math.floor(Math.random() * categories.length)];
   const subCategory = subCategories[category][Math.floor(Math.random() * subCategories[category].length)];
@@ -83,7 +84,7 @@ for (let i = 1; i <= 5000; i++) {
   const endDate = new Date("2026-08-25").getTime();
   const randomDate = new Date(startDate + Math.random() * (endDate - startDate));
 
-  const product = {
+  documents.push({
     productId: "PROD" + String(i).padStart(5, "0"),
     productName: brand + " " + subCategory + " " + i,
     category,
@@ -122,20 +123,17 @@ for (let i = 1; i <= 5000; i++) {
     },
     isFeatured: Math.random() > 0.7,
     createdAt: new Date()
-  };
+  });
 
-  documents.push(product);
-
-  // Insert every 500 documents.
   if (documents.length === 500) {
     db.aggex.insertMany(documents);
     documents = [];
   }
 }
 
-// Insert remaining documents, if any.
 if (documents.length > 0) {
   db.aggex.insertMany(documents);
 }
 
 print("5000 documents inserted successfully into aggex!");
+print("Total documents:", db.aggex.countDocuments());
