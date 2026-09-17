@@ -1,6 +1,6 @@
 # MongoDB Practice
 
-A clean, beginner-friendly collection of MongoDB and `mongosh` JavaScript practicals covering databases, CRUD, query operators, update operators, arrays, nested documents, projection, sorting, and aggregation.
+A clean, beginner-friendly collection of MongoDB and `mongosh` JavaScript practicals covering databases, CRUD, query operators, update operators, arrays, nested documents, projection, sorting, aggregation, and indexes.
 
 ## Repository Structure
 
@@ -43,6 +43,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 31 | `31-aggregation-advanced.js` | `$filter`, `$map`, `$reduce`, `$graphLookup`, buckets, sampling, `$out`, `$merge` |
 | 32 | `32-aggex-data-generation.js` | Generates the 5,000-document `aggex` practice dataset |
 | 33 | `33-aggregation-complete-practice.js` | Independent end-to-end aggregation practice set |
+| 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |
 
 ## Concepts Covered
 
@@ -105,6 +106,21 @@ Aggregation examples include:
 - Writing results with `$out` and `$merge`
 - Complete multi-stage pipelines
 
+### Indexes
+`34-indexes.js` is an independent indexes practical that uses the `PCEA24CA001` database and a separate `indexProducts` collection. It demonstrates:
+- Simple index
+- Compound index
+- Multikey index
+- Text index
+- Hashed index
+- Geospatial `2dsphere` index
+- Unique + sparse index
+- Partial index
+- Wildcard index
+- `explain("executionStats")`, `getIndexes()`, and `dropIndex()`
+
+The indexes practical creates its own 5,000-document dataset and does not intentionally modify the existing practice collections.
+
 ## Running the Scripts
 
 Use MongoDB Shell (`mongosh`). For example:
@@ -125,6 +141,12 @@ For the independent complete aggregation practice:
 load("33-aggregation-complete-practice.js")
 ```
 
+For the indexes practical:
+
+```javascript
+load("34-indexes.js")
+```
+
 > **Important:** Scripts that insert or modify data should be run against a practice database/collection. Some scripts intentionally update or delete documents.
 
 ## Notes
@@ -133,4 +155,5 @@ load("33-aggregation-complete-practice.js")
 - Random-data scripts generate different values on each run.
 - `32-aggex-data-generation.js` recreates the `aggex` dataset; run it only when you intentionally want a fresh dataset.
 - `33-aggregation-complete-practice.js` uses separate collections and includes its own supporting data, so it does not depend on the original `aggex` dataset.
+- `34-indexes.js` recreates only the `indexProducts` practice collection when run; other collections in `PCEA24CA001` are not intentionally modified.
 - Never commit MongoDB Atlas connection strings, usernames, passwords, API keys, or other secrets to this repository.
