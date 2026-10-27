@@ -45,6 +45,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 33 | `33-aggregation-complete-practice.js` | Independent end-to-end aggregation practice set |
 | 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |
 | 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
+| 36 | `36-replication-complete-practical.js` | Replica-set setup, Primary/Secondary roles, read preference, read/write concern, replication health and elections/failover |
 
 ## Concepts Covered
 
@@ -107,6 +108,12 @@ Aggregation examples include:
 - Writing results with `$out` and `$merge`
 - Complete multi-stage pipelines
 
+### Replication
+
+`36-replication-complete-practical.js` is a hands-on local replica-set lab. It documents three local `mongod` members, `rs.initiate()`, Primary/Secondary roles, `rs.status()`, read preferences, read concern, write concern, replication lag inspection and a separate manual failover exercise. It uses the dedicated `MongoDBReplicationLab.orders` collection and does not drop that collection.
+
+**Prerequisite:** A local MongoDB Server installation with three separate `mongod` processes. Read and follow the setup instructions at the top of the script before running it. The lab is for local learning, not production deployment.
+
 ### Indexes
 `34-indexes.js` is an independent indexes practical that uses the `PCEA24CA001` database and a separate `indexProducts` collection. It demonstrates:
 - Simple index
@@ -154,6 +161,12 @@ For the focused complete indexing lesson:
 
 ```javascript
 load("35-indexing-complete-practical.js")
+```
+
+For the replication practical (after starting and initiating the local replica set):
+
+```javascript
+load("36-replication-complete-practical.js")
 ```
 
 > **Important:** Scripts that insert or modify data should be run against a practice database/collection. Some scripts intentionally update or delete documents.
