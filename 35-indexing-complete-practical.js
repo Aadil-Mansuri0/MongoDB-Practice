@@ -48,6 +48,45 @@ print("Documents inserted: " + products.countDocuments());
 printjson(products.find({}, { _id: 0, productId: 1, name: 1, category: 1, price: 1 }).toArray());
 
 // ============================================================
+// 1B. DOCUMENT VALIDATION (SCHEMA VALIDATION)
+// ============================================================
+// Schema validation checks the shape and data types of documents.
+// It is separate from an index: indexes improve query access, while
+// validation helps prevent invalid documents from being stored.
+db.runCommand({
+    collMod: collectionName,
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["productId", "name", "category", "price", "tags"],
+            properties: {
+                productId: { bsonType: ["int", "long", "double"] },
+                name: { bsonType: "string" },
+                category: { bsonType: "string" },
+                price: { bsonType: ["int", "long", "double", "decimal"], minimum: 0 },
+                tags: { bsonType: "array", items: { bsonType: "string" } }
+            }
+        }
+    },
+    validationLevel: "strict",
+    validationAction: "error"
+});
+
+print("\\n=== 1B. EXPECTED SCHEMA VALIDATION ERROR ===");
+try {
+    products.insertOne({
+        productId: 999,
+        name: "Invalid Price Test",
+        category: "Testing",
+        price: "not-a-number",
+        tags: ["test"]
+    });
+    print("Unexpected: invalid document was inserted.");
+} catch (error) {
+    print("Expected validation error caught: " + error.message);
+}
+
+// ============================================================
 // 2. SINGLE-FIELD INDEX
 // ============================================================
 // A single-field index is created on one field.
