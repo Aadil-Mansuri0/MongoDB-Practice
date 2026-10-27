@@ -219,7 +219,8 @@ try {
         productId: 101,
         name: "Duplicate Test Product",
         category: "Testing",
-        price: 999
+        price: 999,
+        tags: ["test"]
     });
     print("Unexpected: duplicate productId was inserted.");
 } catch (error) {
