@@ -43,7 +43,8 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 31 | `31-aggregation-advanced.js` | `$filter`, `$map`, `$reduce`, `$graphLookup`, buckets, sampling, `$out`, `$merge` |
 | 32 | `32-aggex-data-generation.js` | Generates the 5,000-document `aggex` practice dataset |
 | 33 | `33-aggregation-complete-practice.js` | Independent end-to-end aggregation practice set |
-| 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |\n| 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
+| 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes 
+| 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
 
 ## Concepts Covered
 
@@ -121,6 +122,8 @@ Aggregation examples include:
 
 The indexes practical creates its own 5,000-document dataset and does not intentionally modify the existing practice collections.
 
+`35-indexing-complete-practical.js` is a focused indexing lesson using the dedicated `indexingLabProducts` collection in `PCEA24CA001`. It covers single-field and compound indexes, field order, the ESR (Equality, Sort, Range) guideline, multikey indexes, `explain("executionStats")`, `hint()`, hidden indexes, unique-index duplicate-key error handling, and index inspection/removal.
+
 ## Running the Scripts
 
 Use MongoDB Shell (`mongosh`). For example:
@@ -145,6 +148,12 @@ For the indexes practical:
 
 ```javascript
 load("34-indexes.js")
+```
+
+For the focused complete indexing lesson:
+
+```javascript
+load("35-indexing-complete-practical.js")
 ```
 
 > **Important:** Scripts that insert or modify data should be run against a practice database/collection. Some scripts intentionally update or delete documents.
