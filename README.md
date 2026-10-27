@@ -43,7 +43,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 31 | `31-aggregation-advanced.js` | `$filter`, `$map`, `$reduce`, `$graphLookup`, buckets, sampling, `$out`, `$merge` |
 | 32 | `32-aggex-data-generation.js` | Generates the 5,000-document `aggex` practice dataset |
 | 33 | `33-aggregation-complete-practice.js` | Independent end-to-end aggregation practice set |
-| 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |
+| 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |\n| 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
 
 ## Concepts Covered
 
