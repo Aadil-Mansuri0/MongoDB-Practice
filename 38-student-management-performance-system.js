@@ -4,21 +4,19 @@
 // Database: StudentPerformanceDB
 // Collections: students, courses
 //
-// Requirements covered:
-// 1. Design students and courses collections.
-// 2. Insert initial student and course records.
-// 3. Update student marks.
-// 4. Create indexes on the courses collection.
-// 5. Use aggregation to calculate student count and average marks per course.
+// Concepts: collections, upsert, CRUD, $lookup, aggregation, indexes,
+// explain("executionStats"), data validation, and course-wise performance.
 //
-// Run using mongosh:
+// Run from mongosh:
 //   load("38-student-management-performance-system.js")
 //
-// Safety / rerun behavior:
-// - Uses a dedicated practice database.
-// - Uses stable IDs and updateOne(..., {upsert:true}) for seed data.
-// - Does not drop collections or delete existing records.
-// - Mark update and index creation can be rerun safely.
+// SAFETY / RERUN BEHAVIOR:
+// - Uses the dedicated StudentPerformanceDB practice database.
+// - Does not drop collections or delete documents.
+// - Upserts the six project student IDs and three course codes using $set,
+//   so rerunning this script also corrects the project's sample fields.
+// - STU1003's final marks are set to 84 on every run.
+// - Index creation is repeatable.
 // ============================================================================
 
 const studentDb = db.getSiblingDB("StudentPerformanceDB");
@@ -32,9 +30,8 @@ print("Database: " + studentDb.getName());
 print("Collections: students, courses");
 
 // ============================================================================
-// STEP 1: CREATE COLLECTIONS
+// STEP 1: CREATE COLLECTIONS IF NEEDED
 // ============================================================================
-// Explicitly create collections if they do not already exist.
 if (!studentDb.getCollectionNames().includes("students")) {
     studentDb.createCollection("students");
 }
@@ -43,12 +40,13 @@ if (!studentDb.getCollectionNames().includes("courses")) {
 }
 
 print("\n1. Collections ready:");
-printjson(studentDb.getCollectionNames());
+printjson(studentDb.getCollectionNames().filter(function (name) {
+    return name === "students" || name === "courses";
+}).sort());
 
 // ============================================================================
-// STEP 2: INSERT INITIAL COURSE RECORDS
+// STEP 2: SEED COURSE RECORDS
 // ============================================================================
-// courseCode is the stable key used to connect students with courses.
 const courseSeed = [
     {
         courseCode: "CS101",
@@ -73,10 +71,12 @@ const courseSeed = [
     }
 ];
 
+// $set makes the sample records consistent even if an earlier practice run
+// inserted incomplete or different sample fields for these same course codes.
 courseSeed.forEach(function (course) {
     courses.updateOne(
         { courseCode: course.courseCode },
-        { $setOnInsert: course },
+        { $set: course },
         { upsert: true }
     );
 });
@@ -85,12 +85,8 @@ print("\n2. Course records:");
 printjson(courses.find({}, { _id: 0 }).sort({ courseCode: 1 }).toArray());
 
 // ============================================================================
-// STEP 3: INSERT INITIAL STUDENT RECORDS
+// STEP 3: SEED STUDENT RECORDS
 // ============================================================================
-// Each student record stores one course enrollment and that course's marks.
-// In a larger system with multiple courses per student, a separate enrollments
-// collection (or an enrollment array) may be a better data model. This project
-// intentionally stays with the two collections requested in the assignment.
 const studentSeed = [
     {
         studentId: "STU1001",
@@ -142,10 +138,11 @@ const studentSeed = [
     }
 ];
 
+// $set updates only the listed sample fields; it does not replace whole documents.
 studentSeed.forEach(function (student) {
     students.updateOne(
         { studentId: student.studentId },
-        { $setOnInsert: student },
+        { $set: student },
         { upsert: true }
     );
 });
@@ -158,9 +155,8 @@ printjson(
 );
 
 // ============================================================================
-// STEP 4: VALIDATE RELATIONSHIPS
+// STEP 4: VALIDATE STUDENT-TO-COURSE REFERENCES
 // ============================================================================
-// Find students whose courseCode does not exist in courses.
 print("\n4. Students referencing a missing course (expected: empty array):");
 printjson(
     students.aggregate([
@@ -178,17 +174,11 @@ printjson(
 );
 
 // ============================================================================
-// STEP 5: UPDATE STUDENT MARKS
+// STEP 5: UPDATE MARKS
 // ============================================================================
-// Example: update STU1003's marks. Re-running sets the same final value.
 const marksUpdate = students.updateOne(
     { studentId: "STU1003" },
-    {
-        $set: {
-            marks: 84,
-            lastMarksUpdatedAt: new Date()
-        }
-    }
+    { $set: { marks: 84, lastMarksUpdatedAt: new Date() } }
 );
 
 print("\n5. Marks update result for STU1003:");
@@ -202,33 +192,19 @@ printjson(
 );
 
 // ============================================================================
-// STEP 6: CREATE INDEXES ON THE COURSES COLLECTION
+// STEP 6: CREATE COURSE INDEXES
 // ============================================================================
-// Unique index: ensures that every course has a distinct courseCode.
-// Compound index: supports queries that filter by department and then sort
-// by courseName. The field order matters for compound-index query patterns.
 print("\n6. Create indexes on courses:");
 print("Unique courseCode index:");
-printjson(
-    courses.createIndex(
-        { courseCode: 1 },
-        { unique: true, name: "courseCode_unique_idx" }
-    )
-);
+printjson(courses.createIndex({ courseCode: 1 }, { unique: true }));
 
 print("Compound department + courseName index:");
-printjson(
-    courses.createIndex(
-        { department: 1, courseName: 1 },
-        { name: "department_courseName_idx" }
-    )
-);
+printjson(courses.createIndex({ department: 1, courseName: 1 }));
 
 print("Current course indexes:");
 printjson(courses.getIndexes());
 
-// Example query that can use the compound index.
-print("\nExample: courses in Computer Science, sorted by course name:");
+print("\nExample: Computer Science courses sorted by course name:");
 printjson(
     courses.find(
         { department: "Computer Science" },
@@ -244,11 +220,8 @@ printjson(
 );
 
 // ============================================================================
-// STEP 7: AGGREGATION - TOTAL STUDENTS AND AVERAGE MARKS PER COURSE
+// STEP 7: COURSE-WISE STUDENT COUNT AND AVERAGE MARKS
 // ============================================================================
-// Start from courses and $lookup matching students. This approach also keeps
-// courses with zero enrolled students in the output (count 0, average null).
-// The average is calculated from the students' marks after the update above.
 print("\n7. Course-wise student count and average marks:");
 const coursePerformance = courses.aggregate([
     {
@@ -269,15 +242,13 @@ const coursePerformance = courses.aggregate([
             averageMarks: { $avg: "$enrolledStudents.marks" }
         }
     },
-    {
-        $sort: { courseCode: 1 }
-    }
+    { $sort: { courseCode: 1 } }
 ]).toArray();
 
 printjson(coursePerformance);
 
 // ============================================================================
-// STEP 8: OPTIONAL OVERALL SUMMARY
+// STEP 8: OVERALL STUDENT SUMMARY
 // ============================================================================
 print("\n8. Overall student summary:");
 printjson({
@@ -292,31 +263,68 @@ printjson({
                 maximumMarks: { $max: "$marks" }
             }
         },
-        { $project: { _id: 0, averageMarks: 1, minimumMarks: 1, maximumMarks: 1 } }
+        {
+            $project: {
+                _id: 0,
+                averageMarks: 1,
+                minimumMarks: 1,
+                maximumMarks: 1
+            }
+        }
     ]).toArray()[0] || null
 });
 
 // ============================================================================
-// STEP 9: QUICK MANUAL QUERIES
+// STEP 9: DATA QUALITY CHECKS
 // ============================================================================
-// Uncomment and run individually if you want to practise:
-//
-// students.find({ marks: { $gte: 85 } }, { _id: 0 }).sort({ marks: -1 });
-// courses.find({ department: "Computer Science" }).sort({ courseName: 1 });
-// students.find({ courseCode: "CS101" }, { _id: 0, name: 1, marks: 1 });
-// students.updateOne({ studentId: "STU1001" }, { $inc: { marks: 1 } });
-//
-// EXPECTED COURSE-WISE RESULT AFTER THE UPDATE:
+print("\n9. Students missing a required field (expected: 0):");
+print(students.countDocuments({
+    $or: [
+        { studentId: { $exists: false } },
+        { courseCode: { $exists: false } },
+        { marks: { $exists: false } }
+    ]
+}));
+
+print("\nStudents with a course reference that does not exist (expected: 0):");
+print(students.aggregate([
+    {
+        $lookup: {
+            from: "courses",
+            localField: "courseCode",
+            foreignField: "courseCode",
+            as: "courseMatch"
+        }
+    },
+    { $match: { courseMatch: { $eq: [] } } },
+    { $count: "studentsWithMissingCourse" }
+]).toArray());
+
+// ============================================================================
+// STEP 10: OPTIONAL MANUAL PRACTICE QUERIES
+// ============================================================================
+/*
+// Students with marks >= 85:
+students.find({ marks: { $gte: 85 } }, { _id: 0 }).sort({ marks: -1 });
+
+// Courses in Computer Science:
+courses.find({ department: "Computer Science" }).sort({ courseName: 1 });
+
+// Students enrolled in CS101:
+students.find(
+    { courseCode: "CS101" },
+    { _id: 0, name: 1, marks: 1 }
+).sort({ name: 1 });
+*/
+
+// Expected course-wise results after the marks update:
 // CS101 -> 2 students; average marks = (86 + 91) / 2 = 88.5
 // CS102 -> 2 students; average marks = (84 + 88) / 2 = 86
 // AI201 -> 2 students; average marks = (95 + 82) / 2 = 88.5
-//
-// Note: The script does not delete or recreate collections. If you manually
-// change seed records, the expected averages will naturally change.
 
 print("\n============================================================");
 print("PROJECT COMPLETED");
 print("Database: StudentPerformanceDB");
 print("Collections: students, courses");
-print("Topics: CRUD, update, indexes, explain, $lookup, $avg, $size, $sort");
+print("Topics: CRUD, upsert, indexes, explain, $lookup, $avg, $size, $sort");
 print("============================================================");
