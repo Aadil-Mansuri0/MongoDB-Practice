@@ -1,7 +1,6 @@
 // MongoDB Practice 04 - Employee Database
 
-use employeeDB
-
+use("employeeDB");
 db.createCollection("employees")
 
 db.employees.insertMany([
