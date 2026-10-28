@@ -1,7 +1,6 @@
 // MongoDB Practice 01 - Student Database
 
-use studentDB
-
+use("studentDB");
 db.createCollection("students")
 
 db.students.insertMany([
