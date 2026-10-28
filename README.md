@@ -46,6 +46,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 34 | `34-indexes.js` | Simple, compound, multikey, text, hashed, geospatial, unique/sparse, partial and wildcard indexes |
 | 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
 | 36 | `36-replication-complete-practical.js` | Replica-set setup, Primary/Secondary roles, read preference, read/write concern, replication health and elections/failover |
+| 37 | `37-backup-and-recovery-complete-practical.md` | Full replica-set logical backups, oplog-aware restore, verification, RPO/RTO and disaster-recovery strategy |
 
 ## Concepts Covered
 
@@ -108,6 +109,12 @@ Aggregation examples include:
 - Writing results with `$out` and `$merge`
 - Complete multi-stage pipelines
 
+### Backup and Recovery
+
+`37-backup-and-recovery-complete-practical.md` is a command-line practical guide for replica-set backups and restores using MongoDB Database Tools. It covers `mongodump --oplog`, compatible `mongorestore --oplogReplay` workflows, safe test restores, recovery validation, RPO/RTO, backup retention, security and disaster-recovery planning.
+
+**Prerequisites:** MongoDB Database Tools and a healthy replica set. These are terminal commands, not `mongosh` commands. Always restore to an isolated test deployment first; never test a recovery procedure against production data.
+
 ### Replication
 
 `36-replication-complete-practical.js` is a hands-on local replica-set lab. It documents three local `mongod` members, `rs.initiate()`, Primary/Secondary roles, `rs.status()`, read preferences, read concern, write concern, replication lag inspection and a separate manual failover exercise. It uses the dedicated `MongoDBReplicationLab.orders` collection and does not drop that collection.
@@ -168,6 +175,10 @@ For the replication practical (after starting and initiating the local replica s
 ```javascript
 load("36-replication-complete-practical.js")
 ```
+
+For the backup and recovery guide, follow the terminal commands in the Markdown file (it is a guide, not a script to load in `mongosh`):
+
+[`37-backup-and-recovery-complete-practical.md`](37-backup-and-recovery-complete-practical.md)
 
 > **Important:** Scripts that insert or modify data should be run against a practice database/collection. Some scripts intentionally update or delete documents.
 
