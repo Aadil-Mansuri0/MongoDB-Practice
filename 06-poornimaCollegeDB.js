@@ -2,8 +2,7 @@
 // Requirements: database named after college, Student collection, at least 15 documents,
 // embedded address object and skills array.
 
-use poornimaCollegeDB
-
+use("poornimaCollegeDB");
 db.createCollection("Student")
 
 db.Student.insertMany([
