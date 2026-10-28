@@ -1,7 +1,6 @@
 // MongoDB Practice 02 - E-Commerce Database
 
-use ecommerceDB
-
+use("ecommerceDB");
 db.createCollection("products")
 
 db.products.insertMany([
