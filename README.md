@@ -206,6 +206,6 @@ For the backup and recovery guide, follow the terminal commands in the Markdown 
 - These are learning/practical scripts, not a production application.
 - Random-data scripts generate different values on each run.
 - `32-aggex-data-generation.js` recreates the `aggex` dataset; run it only when you intentionally want a fresh dataset.
-- `33-aggregation-complete-practice.js` uses separate collections and includes its own supporting data, so it does not depend on the original `aggex` dataset.
+- `33-aggregation-complete-practice.js` uses separate collections and includes its own supporting data, so it does not depend on the original `aggex` dataset. **Warning:** each run drops and recreates `aggregationProducts`, `aggregationCustomers`, and `aggregationSellers` in `PCEA24CA001`; back up any data in those exact collections before running it.
 - `34-indexes.js` recreates only the `indexProducts` practice collection when run; other collections in `PCEA24CA001` are not intentionally modified.
 - Never commit MongoDB Atlas connection strings, usernames, passwords, API keys, or other secrets to this repository.
