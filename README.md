@@ -47,6 +47,7 @@ The scripts are numbered in learning order. Each file focuses on one practical c
 | 35 | `35-indexing-complete-practical.js` | End-to-end indexing practical: single-field, compound, ESR, multikey, explain, hint, hidden and unique indexes, error handling and index maintenance |
 | 36 | `36-replication-complete-practical.js` | Replica-set setup, Primary/Secondary roles, read preference, read/write concern, replication health and elections/failover |
 | 37 | `37-backup-and-recovery-complete-practical.md` | Full replica-set logical backups, oplog-aware restore, verification, RPO/RTO and disaster-recovery strategy |
+| 38 | `38-student-management-performance-system.js` | Student Management & Performance System: two collections, seed data, marks update, course indexes and course-wise aggregation |
 
 ## Concepts Covered
 
@@ -108,6 +109,18 @@ Aggregation examples include:
 - Explicit and automatic price buckets
 - Writing results with `$out` and `$merge`
 - Complete multi-stage pipelines
+
+### Student Management & Performance System
+
+`38-student-management-performance-system.js` is a complete end-to-end project using the dedicated `StudentPerformanceDB` database and the `students` and `courses` collections. It seeds sample records idempotently, updates a student's marks, creates unique and compound indexes on `courses`, demonstrates `explain("executionStats")`, and uses `$lookup` / `$avg` / `$size` to report student count and average marks per course. It also includes an overall marks summary and a missing-course reference check.
+
+Run with `mongosh`:
+
+```javascript
+load("38-student-management-performance-system.js")
+```
+
+The script does not drop or recreate collections. Sample records are inserted with stable IDs, so reruns do not duplicate the seed data. The marks update is repeatable and sets the same final value.
 
 ### Backup and Recovery
 
@@ -174,6 +187,12 @@ For the replication practical (after starting and initiating the local replica s
 
 ```javascript
 load("36-replication-complete-practical.js")
+```
+
+For the Student Management & Performance System project:
+
+```javascript
+load("38-student-management-performance-system.js")
 ```
 
 For the backup and recovery guide, follow the terminal commands in the Markdown file (it is a guide, not a script to load in `mongosh`):
