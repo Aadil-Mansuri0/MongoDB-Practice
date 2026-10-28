@@ -77,7 +77,7 @@ db.aggex.aggregate([
         name: {
           $arrayElemAt: [
             ["Jaipur", "Delhi", "Mumbai", "Pune"],
-            { $mod: [{ $toInt: { $substr: ["$productId", 4, 4] } }, 4] }
+            { $mod: [{ $toInt: { $substr: ["$productId", 4, 5] } }, 4] }
           ]
         }
       }
