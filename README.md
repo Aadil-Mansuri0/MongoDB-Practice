@@ -204,8 +204,11 @@ For the backup and recovery guide, follow the terminal commands in the Markdown 
 ## Notes
 
 - These are learning/practical scripts, not a production application.
+- Several early seed scripts (`01`–`06`, `08`, and `12`) are intended as first-run examples and are not all idempotent; rerunning them may fail because a collection already exists or may insert duplicate sample records.
+- Many operator demonstrations intentionally update documents, increment values, change arrays, or delete records. Re-seed/reset only the relevant practice collection before repeating a lesson when you need the original starting state.
 - Random-data scripts generate different values on each run.
 - `32-aggex-data-generation.js` recreates the `aggex` dataset; run it only when you intentionally want a fresh dataset.
 - `33-aggregation-complete-practice.js` uses separate collections and includes its own supporting data, so it does not depend on the original `aggex` dataset. **Warning:** each run drops and recreates `aggregationProducts`, `aggregationCustomers`, and `aggregationSellers` in `PCEA24CA001`; back up any data in those exact collections before running it.
+- `31-aggregation-advanced.js` also drops and rebuilds `aggregationSellers` for its `$graphLookup` example. Back up that exact collection first if it contains anything you need.
 - `34-indexes.js` recreates only the `indexProducts` practice collection when run; other collections in `PCEA24CA001` are not intentionally modified.
 - Never commit MongoDB Atlas connection strings, usernames, passwords, API keys, or other secrets to this repository.
