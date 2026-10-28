@@ -1,7 +1,6 @@
 // MongoDB Practice 05 - Basic Database and Collection Operations
 
-use mongoPracticeDB
-
+use("mongoPracticeDB");
 db.createCollection("users")
 
 db.users.insertMany([
