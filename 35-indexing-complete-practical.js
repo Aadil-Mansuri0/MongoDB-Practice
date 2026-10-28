@@ -72,7 +72,7 @@ db.runCommand({
     validationAction: "error"
 });
 
-print("\\n=== 1B. EXPECTED SCHEMA VALIDATION ERROR ===");
+print("\n=== 1B. EXPECTED SCHEMA VALIDATION ERROR ===");
 try {
     products.insertOne({
         productId: 999,
