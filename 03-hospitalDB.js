@@ -1,7 +1,6 @@
 // MongoDB Practice 03 - Hospital Database
 
-use hospitalDB
-
+use("hospitalDB");
 db.createCollection("patients")
 
 db.patients.insertMany([
