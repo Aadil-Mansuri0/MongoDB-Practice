@@ -37,7 +37,7 @@ STYLE="""<style>
 body{margin:0;background:#0b1220;color:#e7eef9;font:15px/1.5 system-ui}header,main{padding:22px max(4vw,18px)}header{background:#101b2d;border-bottom:1px solid #2a3a50}h1{margin:0}nav{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}a,button{color:#e7eef9;background:#17263a;border:1px solid #31445e;border-radius:8px;padding:9px 12px;text-decoration:none;cursor:pointer}main{max-width:1150px;margin:auto}.card{background:#121f32;border:1px solid #2a3a50;border-radius:12px;padding:16px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.metric{font-size:28px;color:#63dec9}input,select{padding:10px;background:#0b1423;color:#fff;border:1px solid #31445e;border-radius:7px;margin:4px}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:9px;border-bottom:1px solid #2a3a50}small{color:#9aacc4}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow:auto}
 </style>"""
 def page(title, body):
-    nav=" ".join(f'<a href="{u}">{n}</a>' for u,n in [("/","Dashboard"),("/patients","Patients"),("/doctors","Doctors"),("/appointments","Appointments"),("/billing","Billing"),("/rooms","Rooms"),("/queries","Query Lab")])
+    nav=" ".join(f'<a href="{u}">{n}</a>' for u,n in [("/","Dashboard"),("/patients","Patients"),("/doctors","Doctors"),("/appointments","Appointments"),("/billing","Billing"),("/rooms","Rooms"),("/medical-records","Medical Records"),("/prescriptions","Prescriptions"),("/queries","Query Lab")])
     return render_template_string(f'<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title}</title>{STYLE}</head><body><header><h1>Hospital Management System</h1><p>Flask · MongoDB · CRUD · Aggregation</p><nav>{nav}</nav></header><main><p><small>Mode: {"in-memory demo" if DEMO else "MongoDB"} · Educational project only; do not use real patient data.</small></p>{body}</main></body></html>')
 
 def docs(cursor): return [{k:(str(v) if k=="_id" else v) for k,v in d.items()} for d in cursor]
@@ -101,6 +101,12 @@ def queries():
     body='<h2>MongoDB Query Lab</h2><div class="card"><form method="post"><select name="query_id"><option value="patients">All patients (find)</option><option value="count">Patient count</option><option value="doctors">Sort doctors</option><option value="revenue">Paid revenue aggregation</option><option value="lookup">Appointments with patient names ($lookup)</option></select><button>Run</button></form>'
     if out is not None: body+=f'<pre>{__import__("json").dumps(out,indent=2,default=str)}</pre>'
     return page("Query Lab",body+"</div>")
+@app.get("/medical-records")
+def medical_records():
+    return page("Medical Records","<h2>Medical Records</h2>"+table(docs(db.medical_records.find().sort("record_date",-1)),["record_id","patient_id","doctor_id","diagnosis","treatment","record_date","follow_up"]))
+@app.get("/prescriptions")
+def prescriptions():
+    return page("Prescriptions","<h2>Prescriptions</h2>"+table(docs(db.prescriptions.find().sort("date",-1)),["prescription_id","patient_id","doctor_id","date","medicines","instructions"]))
 @app.get("/api/health")
 def health(): return jsonify({"status":"ok","database_mode":"demo" if DEMO else "mongodb"})
 @app.get("/api/stats")
