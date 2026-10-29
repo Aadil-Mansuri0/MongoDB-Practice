@@ -9,7 +9,7 @@ An educational hospital workflow and MongoDB DBMS project built with Flask, PyMo
 - Dashboard metrics for patients, doctors, appointments, billing, and rooms
 - Patient registration, search, and deletion
 - Doctor directory and appointment scheduling
-- Billing summary and paid-revenue calculation
+- Medical-records and prescriptions views\n- Billing summary and paid-revenue calculation
 - Ward/bed overview
 - Read-only MongoDB Query Lab: `find`, `countDocuments`, `$match`, `$group`, and `$lookup`
 - Temporary in-memory demo mode if MongoDB is unavailable
@@ -38,7 +38,7 @@ Open http://127.0.0.1:5000. Configure `MONGO_URI`, `DB_NAME`, and a strong rando
 | `/` | Dashboard |
 | `/patients` | Patient search and CRUD |
 | `/doctors` | Doctor directory |
-| `/appointments` | Appointment scheduling |
+| `/appointments` | Appointment scheduling |\n| `/medical-records` | Medical records |\n| `/prescriptions` | Prescription list |
 | `/billing` | Bills and paid revenue |
 | `/rooms` | Ward/bed overview |
 | `/queries` | MongoDB query lab |
