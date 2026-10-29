@@ -1,0 +1,34 @@
+name: Verify Student Management API
+
+on:
+  push:
+    paths:
+      - "final-project-student-management-api/**"
+      - ".github/workflows/student-management-api.yml"
+  pull_request:
+    paths:
+      - "final-project-student-management-api/**"
+      - ".github/workflows/student-management-api.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: final-project-student-management-api
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: final-project-student-management-api/package.json
+      - name: Install dependencies
+        run: npm install
+      - name: Check JavaScript syntax
+        run: npm run check
+      - name: Run API integration tests
+        run: npm test
