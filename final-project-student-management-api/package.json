@@ -1,0 +1,20 @@
+{
+  "name": "student-management-performance-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MongoDB CRUD API with indexing, aggregation, tests, deployment, replication and backup guidance.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test",
+    "check": "node --check src/server.js && node --check src/app.js && node --check src/models/Student.js && node --check src/models/Course.js && node --check src/routes/students.js && node --check src/routes/courses.js && node --check scripts/seed.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "cors": "^2.8.5", "dotenv": "^16.4.7", "express": "^4.21.2",
+    "helmet": "^8.0.0", "mongoose": "^8.9.5", "morgan": "^1.10.0"
+  },
+  "devDependencies": { "mongodb-memory-server": "^10.1.4", "supertest": "^7.0.0" }
+}
