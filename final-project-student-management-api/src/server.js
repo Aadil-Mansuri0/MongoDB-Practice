@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const app = require("./app");
 
 async function start() {
-  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is required; configure it in .env");
+  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is required; configure it in .env or the hosting environment");
   await mongoose.connect(process.env.MONGODB_URI, {
     serverSelectionTimeoutMS: 10000,
     autoIndex: process.env.NODE_ENV !== "production"
   });
   const port = Number(process.env.PORT) || 3000;
-  const server = app.listen(port, () => console.log("API listening on port " + port));
+  const server = app.listen(port, "0.0.0.0", () => console.log("API listening on port " + port));
   const shutdown = async signal => {
     console.log(signal + " received; shutting down");
     server.close(async () => { await mongoose.disconnect(); process.exit(0); });
