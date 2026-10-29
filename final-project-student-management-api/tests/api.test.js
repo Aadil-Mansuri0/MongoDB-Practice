@@ -10,6 +10,7 @@ test("Student Management API integration", async t => {
   await mongoose.connect(mongo.getUri());
   const Student = require("../src/models/Student");
   const Course = require("../src/models/Course");
+  await Promise.all([Student.init(), Course.init()]);
   await Course.create({ courseCode: "CS101", courseName: "Database Systems", department: "Computer Science", credits: 4, instructor: "Dr. Sharma" });
   await t.after(async () => { await mongoose.disconnect(); await mongo.stop(); });
 
