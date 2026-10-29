@@ -212,3 +212,10 @@ For the backup and recovery guide, follow the terminal commands in the Markdown 
 - `31-aggregation-advanced.js` also drops and rebuilds `aggregationSellers` for its `$graphLookup` example. Back up that exact collection first if it contains anything you need.
 - `34-indexes.js` recreates only the `indexProducts` practice collection when run; other collections in `PCEA24CA001` are not intentionally modified.
 - Never commit MongoDB Atlas connection strings, usernames, passwords, API keys, or other secrets to this repository.
+
+
+### Final Backend Application Project
+
+The folder `final-project-student-management-api/` contains a REST backend using Node.js, Express, MongoDB and Mongoose. It covers student/course CRUD, input validation, indexed filtering and sorting, course-wise aggregation, API tests, deployment steps, and operational plans for replica-set replication and backup/recovery.
+
+Start here: [Final project README](final-project-student-management-api/README.md). Read [operations guide](final-project-student-management-api/docs/operations.md) for index evaluation, replication, backups, restores and deployment. The API and tests are source files; replication and automated backup still require configuration and verification in the actual MongoDB deployment.
