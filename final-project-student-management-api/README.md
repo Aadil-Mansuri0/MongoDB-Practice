@@ -80,7 +80,7 @@ curl -X DELETE http://localhost:3000/api/students/STU1007
 
 ## Performance, replication and backup
 
-See docs/operations.md for index rationale, explain execution stats, replica-set strategy, mongodump/mongorestore, restore validation and deployment checklist.
+See docs/operations.md for index rationale, explain execution stats, replica-set strategy, backup/recovery and deployment checklist. The `scripts/backup.sh` script creates a timestamped logical backup using `mongodump`; `scripts/restore-test.sh` restores into a separate test database by default and refuses to target the source database. Both require MongoDB Database Tools and environment variables. Review the scripts before use.
 
 Important: running the API does not itself configure replication or automated backups. Those must be enabled and verified in the actual MongoDB deployment. No benchmark or live deployment is claimed.
 
@@ -97,6 +97,8 @@ final-project-student-management-api/
 ├── src/models/
 ├── src/routes/
 ├── scripts/seed.js
+├── scripts/backup.sh
+├── scripts/restore-test.sh
 ├── tests/api.test.js
 ├── docs/operations.md
 ├── .env.example
